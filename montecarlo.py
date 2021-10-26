@@ -59,10 +59,10 @@ for i in range(0, simulations):
     simulated_paths.append(price_path)
     
     window_sums = np.sum(sliding_window_view(barrier_path, window_shape=barrier_obs_window), axis=1) #use numpy function to do sum of barrier booleans in each barrier window
-    idx_barrier_break = np.argmax(window_sums >= barrier_threshold) #use argmax function to get location of first day in first barrier window where price is above redemption trigger
+    idx_barrier_break = np.argmax(window_sums >= barrier_threshold) #use argmax function to get array location of first day in first barrier window where price is above redemption trigger
     
     if idx_barrier_break > 0:
-        final_underlying_prices.append(price_path[idx_barrier_break+barrier_obs_window])
+        final_underlying_prices.append(price_path[idx_barrier_break+barrier_obs_window-1])
     else:
         final_underlying_prices.append(price_path[-1])
 
@@ -70,9 +70,9 @@ for px in final_underlying_prices:
     call_option_prices.append(EuropeanCallPayoff(px, strike) / pow(1 + risk_free_rate, timeframe_in_years)) #call prices discounted to present by risk free rate
 
 avg_call_price = np.average(call_option_prices)
-print(avg_call_price)
+print("Average Call Price:", avg_call_price)
 
-#for sim in simulated_paths:
-#    plt.plot(np.arange(0, len(sim)), sim)
-
-#plt.show()
+ticks = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+plt.hist(call_option_prices, bins=ticks)
+plt.xticks(ticks)
+plt.show()
