@@ -33,7 +33,7 @@ def GeometricBrownianMotion_WithBarrier(initial_price, drift, volatility, timest
 
 risk_free_rate = .0115 #annualized rate corresponding to yield curve that matches tenor of the option
 price = 10.0 #current price of underlying
-annual_vol = 0.40 #estimate of forward looking annualized volatility
+annual_vol = 0.45 #estimate of forward looking annualized volatility
 timestep_in_years = 1 / 252 #estimated trading days in calendar year is 252 (ex: 1/252 for daily timestep or 5/252 for weekly timestep)
 timeframe_in_years = 5
 annual_drift = 0.10 #expected annual return (or alternatively the asset specific discount rate); for option pricing this should equal the risk free rate (risk neutral model)
@@ -43,9 +43,9 @@ final_underlying_prices = []
 
 call_option_prices = []
 strike = 11.5
-redemption_barrier = 18.00 #price at which options can be called or redeemed
-barrier_obs_window = 30
-barrier_threshold = 20
+redemption_barrier = 18.00 #price level at which options can be called or redeemed (assuming observation criteria is met)
+barrier_obs_window = 30 #observation window length (in days)
+barrier_threshold = 20 #number of observations within the observation window in which option price must be above the barrier level
 
 risk_neutral_model = True
 
@@ -53,6 +53,7 @@ if risk_neutral_model == True:
     annual_drift = risk_free_rate
 
 simulations = 1000
+
 #generate list of underlying price paths and barrier crosses
 for i in range(0, simulations):
     price_path, barrier_path = GeometricBrownianMotion_WithBarrier(price, annual_drift, annual_vol, timestep_in_years, timeframe_in_years, redemption_barrier)
@@ -67,12 +68,13 @@ for i in range(0, simulations):
         final_underlying_prices.append(price_path[-1])
 
 for px in final_underlying_prices:
-    call_option_prices.append(EuropeanCallPayoff(px, strike) / pow(1 + risk_free_rate, timeframe_in_years)) #call prices discounted to present by risk free rate
+    call_option_prices.append(EuropeanCallPayoff(px, strike) / pow(1 + risk_free_rate, timeframe_in_years)) #calculate and append call option prices (discounted to present by risk free rate) to list
 
-avg_call_price = np.average(call_option_prices)
-print("Average Call Price:", avg_call_price)
+avg_call_price = np.average(call_option_prices) #calculate average across simulated discounted call option prices
+print("Average Call Price:", avg_call_price) #print the average
 
-ticks = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
-plt.hist(call_option_prices, bins=ticks)
-plt.xticks(ticks)
-plt.show()
+#plot histogram of simulated discounted option prices
+#ticks = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20]
+#plt.hist(call_option_prices, bins=ticks)
+#plt.xticks(ticks)
+#plt.show()
