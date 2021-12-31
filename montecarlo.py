@@ -31,7 +31,7 @@ def GeometricBrownianMotion_WithBarrier(initial_price, drift, volatility, timest
 
     return prices, barrier_checks
 
-risk_free_rate = .0115 #annualized rate corresponding to yield curve that matches tenor of the option
+risk_free_rate = .0125 #annualized rate corresponding to yield curve that matches tenor of the option
 price = 10.0 #current price of underlying
 annual_vol = 0.45 #estimate of forward looking annualized volatility
 timestep_in_years = 1 / 252 #estimated trading days in calendar year is 252 (ex: 1/252 for daily timestep or 5/252 for weekly timestep)
